@@ -1,0 +1,40 @@
+http:
+  middlewares:
+    secheader:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        frameDeny: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        customFrameOptionsValue: "SAMEORIGIN"
+        accesscontrolmaxage: 100
+        addVaryHeader: true
+        accesscontrolallowmethods: "GET,OPTIONS,PUT"
+        forcestsheader: true
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_AES_128_GCM_SHA256
+        - TLS_AES_256_GCM_SHA384
+        - TLS_CHACHA20_POLY1305_SHA256
+      curvePreferences:
+        - CurveP521
+        - CurveP384
+  certificates:
+    - certFile: "/etc/traefik/certs/traefik.crt"
+      keyFile: "/etc/traefik/certs/traefik.key"
+      stores:
+        - default
+  stores:
+    default:
+      defaultCertificate:
+        certFile: "/etc/traefik/certs/traefik.crt"
+        keyFile: "/etc/traefik/certs/traefik.key"

@@ -1,0 +1,47 @@
+version: "3.5"
+services:
+  traefik:
+    hostname: traefik
+    image: traefik:2.6
+    container_name: traefik
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - "TZ"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+      - ${VOLUMES_DIR}/acme:/etc/traefik/acme
+      - ${VOLUMES_DIR}/log:/var/log
+      - ./conf/traefik-dynamic.yml:/etc/traefik/config/dnamic.yml
+      - ./conf/traefik-static.dev.yml:/etc/traefik/traefik.yml
+      - ./cert:/etc/traefik/certs
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik-dashboard.entrypoints=websecure
+      - traefik.http.routers.traefik-dashboard.service=api@internal
+      - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.docker.localhost`)
+
+  whoami:
+    image: containous/whoami
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.entrypoints=websecure
+      - traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)
+
+
+networks:
+  traefik:
+    name: traefik
+    ipam:
+      config:
+        - subnet: ${TRAEFIK_SUBNET}
