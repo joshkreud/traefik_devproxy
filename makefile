@@ -9,4 +9,4 @@ stop:
 	@echo "Stopping Service"
 	docker-compose down --remove-orphans
 cert:
-	./generage_dev_cert.sh
+	./generate_dev_cert.sh
