@@ -38,6 +38,48 @@ services:
       - traefik.http.routers.whoami.entrypoints=websecure
       - traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)
 
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    volumes:
+      # This is where smtp4dev stores the database..
+        - ${VOLUMES_DIR}/smtp4dev:/smtp4dev
+    ports:
+      - "25:25"
+      - "143:143"
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.smtp4dev.entrypoints=websecure
+      - traefik.http.routers.smtp4dev.rule=Host(`smtp.docker.localhost`)
+      - traefik.http.routers.smtp4dev.service=smtp4dev
+      - traefik.http.services.smtp4dev.loadbalancer.server.port=80
+
+      - traefik.tcp.routers.smtp4dev_imap.entrypoints=imap
+      - traefik.tcp.routers.smtp4dev_imap.rule=HostSNI(`smtp.docker.localhost`)
+      - traefik.tcp.routers.smtp4dev_imap.service=smtp4dev_imap
+      - traefik.tcp.routers.smtp4dev_imap.tls
+      - traefik.tcp.services.smtp4dev_imap.loadbalancer.server.port=143
+
+      - traefik.tcp.routers.smtp4dev_smtp.entrypoints=smtp
+      - traefik.tcp.routers.smtp4dev_smtp.rule=HostSNI(`smtp.docker.localhost`)
+      - traefik.tcp.routers.smtp4dev_smtp.service=smtp4dev_smtp
+      - traefik.tcp.routers.smtp4dev_smtp.tls
+      - traefik.tcp.services.smtp4dev_smtp.loadbalancer.server.port=25
+
+    environment:
+      - ServerOptions__HostName=smtp4dev
+      - RelayOptions__SmtpPort=25
+      - ServerOptions__ImapPort=143
+      #- ServerOptions__NumberOfMessagesToKeep=100
+      #- ServerOptions__NumberOfSessionsToKeep=100
+      #- ServerOptions__TlsMode=None
+      #- ServerOptions__TlsCertificate=
+      #- RelayOptions__SmtpServer=
+      #- RelayOptions__AllowedEmailsString=
+      #- RelayOptions__SenderAddress=
+      #- RelayOptions__Login=
+      #- RelayOptions__Password=
 
 networks:
   traefik:
