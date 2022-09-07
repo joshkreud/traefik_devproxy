@@ -16,12 +16,12 @@ services:
       - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/localtime:/etc/localtime:ro
       - ${VOLUMES_DIR}/acme:/etc/traefik/acme
       - ${VOLUMES_DIR}/log:/var/log
       - ./conf/traefik-dynamic.yml:/etc/traefik/config/dnamic.yml
       - ./conf/traefik-static.dev.yml:/etc/traefik/traefik.yml
       - ./cert:/etc/traefik/certs
+      - "/etc/timezone:/etc/timezone:ro"
     labels:
       - traefik.enable=true
       - traefik.http.routers.traefik-dashboard.entrypoints=websecure
