@@ -40,9 +40,10 @@ services:
 
   smtp4dev:
     image: rnwood/smtp4dev:v3
+    hostname: "smtp"
     volumes:
       # This is where smtp4dev stores the database..
-        - ${VOLUMES_DIR}/smtp4dev:/smtp4dev
+      - ${VOLUMES_DIR}/smtp4dev:/smtp4dev
     ports:
       - "25:25"
       - "143:143"
