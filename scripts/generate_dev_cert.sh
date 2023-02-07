@@ -49,6 +49,7 @@ DNS.1   = $DOMAIN
 DNS.2   = *.local
 DNS.3   = *.lan
 DNS.4   = localhost
+DNS.5   = *.jk.wetech.local
 EOF
 # Generate our Private Key, and Certificate directly
 openssl req -x509 -nodes -days 500 -newkey rsa:2048 \

@@ -3,10 +3,11 @@
 
 
 dev: .env
+	./scripts/check_container_requirements.sh
 	@echo "Starting DEV Server"
 	docker-compose up -d --force-recreate
 stop:
 	@echo "Stopping Service"
 	docker-compose down --remove-orphans
 cert:
-	./generate_dev_cert.sh
+	./scripts/generate_dev_cert.sh
