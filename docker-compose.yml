@@ -2,7 +2,7 @@ version: "3.5"
 services:
   traefik:
     hostname: traefik
-    image: traefik:2.6
+    image: traefik:2.9
     container_name: traefik
     # restart: always
     security_opt:
@@ -29,7 +29,7 @@ services:
       - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.docker.localhost`)
 
   whoami:
-    image: containous/whoami
+    image: traefik/whoami
     # restart: always
     networks:
       - traefik
@@ -72,15 +72,6 @@ services:
       - ServerOptions__HostName=smtp4dev
       - RelayOptions__SmtpPort=25
       - ServerOptions__ImapPort=143
-      #- ServerOptions__NumberOfMessagesToKeep=100
-      #- ServerOptions__NumberOfSessionsToKeep=100
-      #- ServerOptions__TlsMode=None
-      #- ServerOptions__TlsCertificate=
-      #- RelayOptions__SmtpServer=
-      #- RelayOptions__AllowedEmailsString=
-      #- RelayOptions__SenderAddress=
-      #- RelayOptions__Login=
-      #- RelayOptions__Password=
 
 networks:
   traefik:
