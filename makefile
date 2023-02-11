@@ -1,6 +1,7 @@
+.PHONY: cert
+
 .env:
 	$(error file .env is missing, see .env.sample)
-
 
 dev: .env
 	./scripts/check_container_requirements.sh
