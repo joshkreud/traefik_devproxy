@@ -34,8 +34,6 @@ entryPoints:
       middlewares:
         - secheader@file
       tls: true
-  postgres:
-    address: ":5432"
   smtp:
     address: ":25"
   imap:
