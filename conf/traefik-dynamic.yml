@@ -29,12 +29,12 @@ tls:
         - CurveP521
         - CurveP384
   certificates:
-    - certFile: "/etc/traefik/certs/traefik.crt"
-      keyFile: "/etc/traefik/certs/traefik.key"
+    - certFile: "/etc/traefik/certs/server.crt"
+      keyFile: "/etc/traefik/certs/server.key"
       stores:
         - default
   stores:
     default:
       defaultCertificate:
-        certFile: "/etc/traefik/certs/traefik.crt"
-        keyFile: "/etc/traefik/certs/traefik.key"
+        certFile: "/etc/traefik/certs/server.crt"
+        keyFile: "/etc/traefik/certs/server.key"

@@ -9,7 +9,7 @@ if [ ! -f .env ]; then
     cp .env.sample .env
 fi
 
-if [ ! -f ./cert/traefik.crt ]; then
+if [ ! -f ./cert/server.crt ]; then
     echo "No Certificate found. Please generate one using 'make cert'"
     exit 1
 fi

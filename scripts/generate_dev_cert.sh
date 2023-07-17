@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 
 # Generates Self signed HTTPs certificates for Traefik.
-
-DOMAIN=*.docker.localhost
-
+set -e
 PROJ_FOLDER=$(dirname $(readlink -f $0))
 PROJ_FOLDER=$(dirname $PROJ_FOLDER)
 
-target_path=./cert
+TARGET_PATH=$PROJ_FOLDER/cert
 
-KEY_PATH=$target_path/traefik.key
-CERT_PATH=$target_path/traefik.crt
+# Set our variables
+DOMAIN="localhost"
+CA_KEY_PATH="$TARGET_PATH/ca.key"
+CA_CERT_PATH="$TARGET_PATH/ca.crt"
+SERVER_KEY_PATH="$TARGET_PATH/server.key"
+SERVER_CERT_PATH="$TARGET_PATH/server.crt"
 
-if [ -f "$KEY_PATH" ]; then
-  read -p "Are you sure to overwrite your already existing Cert?" -n 1 -r
+
+if [ -f "$SERVER_CERT_PATH" ]; then
+  read -p "A server certificate already exists. Do you want to overwrite it? (y/n) " -n 1 -r
   echo
   if [[ ! $REPLY =~ ^[Yy]$ ]]
   then
@@ -24,20 +27,43 @@ fi
 [ -z "$CERT_EMAIL" ] && CERT_EMAIL=$(git config user.email)
 [ -z "$CERT_EMAIL" ] && echo "CERT_EMAIL was not supplied and could not be grabbed from git" && exit 1
 
-# Set our variables
-cat <<EOF > req.cnf
+# Generate the CA certificate
+cat <<EOF > ca.cnf
 [req]
 distinguished_name = req_distinguished_name
-x509_extensions = v3_req
+x509_extensions = v3_ca
 prompt = no
 [req_distinguished_name]
 C = DE
 ST = HE
 OU = H
-CN = localhost
+CN = $DOMAIN
 localityName = $DOMAIN
 commonName = $DOMAIN
-organizationalUnitName = home
+emailAddress = $CERT_EMAIL
+[v3_ca]
+subjectKeyIdentifier = hash
+basicConstraints = CA:true
+EOF
+
+echo "Generating CA certificate..."
+openssl genrsa -out "$CA_KEY_PATH" 2048
+openssl req -x509 -new -nodes -key "$CA_KEY_PATH" -sha256 -days 3650 -out "$CA_CERT_PATH" -config ca.cnf
+rm ca.cnf
+
+# Generate the server certificate
+cat <<EOF > server.cnf
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+[req_distinguished_name]
+C = DE
+ST = HE
+OU = H
+CN = $DOMAIN
+localityName = $DOMAIN
+commonName = $DOMAIN
 emailAddress = $CERT_EMAIL
 [v3_req]
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
@@ -46,13 +72,15 @@ subjectAltName = @alt_names
 basicConstraints = CA:false
 [alt_names]
 DNS.1   = $DOMAIN
-DNS.2   = *.local
-DNS.3   = *.lan
-DNS.4   = localhost
-DNS.5   = *.jk.wetech.local
+DNS.2   = *.docker.localhost
+DNS.3   = *.jk.wetech.local
 EOF
-# Generate our Private Key, and Certificate directly
-openssl req -x509 -nodes -days 500 -newkey rsa:2048 \
-  -keyout "$KEY_PATH" -config req.cnf \
-  -out "$CERT_PATH" -sha256
-rm req.cnf
+
+echo "Generating server certificate..."
+openssl genrsa -out "$SERVER_KEY_PATH" 2048
+openssl req -new -key "$SERVER_KEY_PATH" -out server.csr -config server.cnf
+openssl x509 -req -in server.csr -CA "$CA_CERT_PATH" -CAkey "$CA_KEY_PATH" \
+  -CAcreateserial -out "$SERVER_CERT_PATH" -days 3650 -sha256 -extfile server.cnf -extensions v3_req
+rm server.csr server.cnf
+
+echo "Server certificate generated successfully!"
