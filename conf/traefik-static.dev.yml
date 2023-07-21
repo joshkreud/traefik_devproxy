@@ -38,3 +38,5 @@ entryPoints:
     address: ":25"
   imap:
     address: ":143"
+  internal:
+    address: ":8080"
