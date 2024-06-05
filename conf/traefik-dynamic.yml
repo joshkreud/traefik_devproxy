@@ -1,5 +1,11 @@
 http:
   middlewares:
+    devheaders:
+      headers:
+        #disable cors
+        accesscontrolallowmethods: "GET,OPTIONS,PUT"
+        accesscontrolalloworiginlist: ["*"]
+        accesscontrolallowheaders: ["*"]
     secheader:
       headers:
         browserXssFilter: true

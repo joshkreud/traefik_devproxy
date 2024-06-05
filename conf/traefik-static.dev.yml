@@ -32,7 +32,7 @@ entryPoints:
     address: ":443"
     http:
       middlewares:
-        - secheader@file
+        - devheaders@file
       tls: true
   smtp:
     address: ":25"
