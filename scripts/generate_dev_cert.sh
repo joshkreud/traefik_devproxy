@@ -37,13 +37,13 @@ prompt = no
 C = DE
 ST = HE
 OU = H
-CN = $DOMAIN
-localityName = $DOMAIN
-commonName = $DOMAIN
+CN = Traefik Local CA
+localityName = Traefik Local CA
+commonName = Traefik Local CA
 emailAddress = $CERT_EMAIL
 [v3_ca]
 subjectKeyIdentifier = hash
-basicConstraints = CA:true
+basicConstraints = CA:TRUE
 EOF
 
 echo "Generating CA certificate..."
@@ -61,15 +61,15 @@ prompt = no
 C = DE
 ST = HE
 OU = H
-CN = $DOMAIN
-localityName = $DOMAIN
-commonName = $DOMAIN
+CN = Traefik Local Server
+localityName = Traefik Local Server
+commonName = Traeifk Local Server
 emailAddress = $CERT_EMAIL
 [v3_req]
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
-basicConstraints = CA:false
+basicConstraints = CA:FALSE
 [alt_names]
 DNS.1   = $DOMAIN
 DNS.2   = *.docker.localhost
