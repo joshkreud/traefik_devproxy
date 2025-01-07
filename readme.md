@@ -4,7 +4,7 @@
 
 Local Development Traefik (reverse proxy).
 
-Allows you to easily Proxy docker containers to "*.docker.localhost"\
+Allows you to easily Proxy docker containers to for example "*.docker.localhost"\
 Also contains [whoami](https://hub.docker.com/r/containous/whoami) and [Smtp4Dev](https://github.com/rnwood/smtp4dev).
 
 # Setup
@@ -19,9 +19,9 @@ make # Starts Traefik and Whoami and smtp4dev
 
 ## Default Domains
 
-- http://traefik.docker.localhost --> Traefik Dashboard
-- https://whoami.docker.localhost --> to Simple Whoami Instance
-- http://smtp.docker.localhost --> really cool Development Smtp Catcher.
+- http://traefik.${DOMAINNAME} --> Traefik Dashboard
+- https://whoami.${DOMAINNAME} --> to Simple Whoami Instance
+- http://smtp.${DOMAINNAME} --> really cool Development Email test Service.
 
 ## SSL Trust
 

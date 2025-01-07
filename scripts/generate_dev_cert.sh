@@ -8,7 +8,6 @@ PROJ_FOLDER=$(dirname $PROJ_FOLDER)
 TARGET_PATH=$PROJ_FOLDER/cert
 
 # Set our variables
-DOMAIN="localhost"
 CA_KEY_PATH="$TARGET_PATH/ca.key"
 CA_CERT_PATH="$TARGET_PATH/ca.crt"
 SERVER_KEY_PATH="$TARGET_PATH/server.key"
@@ -71,9 +70,8 @@ extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 basicConstraints = CA:FALSE
 [alt_names]
-DNS.1   = $DOMAIN
+DNS.1   = $DOMAINNAME
 DNS.2   = *.docker.localhost
-DNS.3   = *.jk.wetech.local
 EOF
 
 echo "Generating server certificate..."

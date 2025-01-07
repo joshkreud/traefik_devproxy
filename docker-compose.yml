@@ -1,9 +1,8 @@
-version: "3.5"
 services:
   traefik:
     hostname: traefik
     container_name: traefik
-    image: traefik:3.0.1
+    image: traefik:v3
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -12,13 +11,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     networks:
       - traefik
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${VOLUMES_DIR}/acme:/etc/traefik/acme
-      - ${VOLUMES_DIR}/log:/var/log
+      - ${VOLUMES_DIR}/traefik/acme:/etc/traefik/acme
+      - ${VOLUMES_DIR}/traefik/log:/var/log
       - ./conf/traefik-dynamic.yml:/etc/traefik/config/dnamic.yml
       - ./conf/traefik-static.dev.yml:/etc/traefik/traefik.yml
       - ./cert:/etc/traefik/certs
@@ -27,7 +25,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.traefik-dashboard.entrypoints=websecure
       - traefik.http.routers.traefik-dashboard.service=api@internal
-      - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.docker.localhost`)
+      - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.$${DOMAINNAME}`)
 
   whoami:
     image: traefik/whoami
@@ -37,7 +35,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoami.entrypoints=websecure
-      - traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)
+      - traefik.http.routers.whoami.rule=Host(`whoami.${DOMAINNAME}`)
 
   smtp4dev:
     image: rnwood/smtp4dev:v3
@@ -54,18 +52,18 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.smtp4dev.entrypoints=websecure
-      - traefik.http.routers.smtp4dev.rule=Host(`smtp.docker.localhost`)
+      - traefik.http.routers.smtp4dev.rule=Host(`smtp.${DOMAINNAME}`)
       - traefik.http.routers.smtp4dev.service=smtp4dev
       - traefik.http.services.smtp4dev.loadbalancer.server.port=80
 
       - traefik.tcp.routers.smtp4dev_imap.entrypoints=imap
-      - traefik.tcp.routers.smtp4dev_imap.rule=HostSNI(`imap.docker.localhost`)
+      - traefik.tcp.routers.smtp4dev_imap.rule=HostSNI(`imap.${DOMAINNAME}`)
       - traefik.tcp.routers.smtp4dev_imap.service=smtp4dev_imap
       - traefik.tcp.routers.smtp4dev_imap.tls=true
       - traefik.tcp.services.smtp4dev_imap.loadbalancer.server.port=143
 
       - traefik.tcp.routers.smtp4dev_smtp.entrypoints=smtp
-      - traefik.tcp.routers.smtp4dev_smtp.rule=HostSNI(`smtp.docker.localhost`)
+      - traefik.tcp.routers.smtp4dev_smtp.rule=HostSNI(`smtp.${DOMAINNAME}`)
       - traefik.tcp.routers.smtp4dev_smtp.service=smtp4dev_smtp
       - traefik.tcp.routers.smtp4dev_smtp.tls=true
       - traefik.tcp.services.smtp4dev_smtp.loadbalancer.server.port=25
