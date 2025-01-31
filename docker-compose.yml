@@ -30,48 +30,13 @@ services:
   whoami:
     image: traefik/whoami
     restart: unless-stopped
+    container_name: whoami
     networks:
       - traefik
     labels:
       - traefik.enable=true
       - traefik.http.routers.whoami.entrypoints=websecure
       - traefik.http.routers.whoami.rule=Host(`whoami.${DOMAINNAME}`)
-
-  smtp4dev:
-    image: rnwood/smtp4dev:v3
-    hostname: "smtp"
-    restart: unless-stopped
-    volumes:
-      # This is where smtp4dev stores the database..
-      - ${VOLUMES_DIR}/smtp4dev:/smtp4dev
-    ports:
-      - "25:25"
-      - "143:143"
-    networks:
-      - traefik
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.smtp4dev.entrypoints=websecure
-      - traefik.http.routers.smtp4dev.rule=Host(`smtp.${DOMAINNAME}`)
-      - traefik.http.routers.smtp4dev.service=smtp4dev
-      - traefik.http.services.smtp4dev.loadbalancer.server.port=80
-
-      - traefik.tcp.routers.smtp4dev_imap.entrypoints=imap
-      - traefik.tcp.routers.smtp4dev_imap.rule=HostSNI(`imap.${DOMAINNAME}`)
-      - traefik.tcp.routers.smtp4dev_imap.service=smtp4dev_imap
-      - traefik.tcp.routers.smtp4dev_imap.tls=true
-      - traefik.tcp.services.smtp4dev_imap.loadbalancer.server.port=143
-
-      - traefik.tcp.routers.smtp4dev_smtp.entrypoints=smtp
-      - traefik.tcp.routers.smtp4dev_smtp.rule=HostSNI(`smtp.${DOMAINNAME}`)
-      - traefik.tcp.routers.smtp4dev_smtp.service=smtp4dev_smtp
-      - traefik.tcp.routers.smtp4dev_smtp.tls=true
-      - traefik.tcp.services.smtp4dev_smtp.loadbalancer.server.port=25
-
-    environment:
-      - ServerOptions__HostName=smtp4dev
-      - RelayOptions__SmtpPort=25
-      - ServerOptions__ImapPort=143
 
 networks:
   traefik:
